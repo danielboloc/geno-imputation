@@ -4,11 +4,14 @@ def info (){
     summary['Max Memory']       = params.max_memory
     summary['Max CPUs']         = params.max_cpus
     summary['Max Time']         = params.max_time
-    summary['Output dir']       = params.outDir
+    summary['Output dir']       = params.outdir
     summary['Working dir']      = workflow.workDir
     summary['Script dir']       = workflow.projectDir
     summary['Current path']     = "$PWD"
 
+    log.info "========================================================"
+    log.info "SUMMARY OF THE RUN                                      "
+    log.info "------------------                                      "
     log.info summary.collect { k,v -> "${k.padRight(20)}: $v" }.join("\n")
     log.info "========================================================"
     log.info ""
