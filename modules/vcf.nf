@@ -1,10 +1,10 @@
 process split_norm_phase {
 
 	label 'big_mem'
-	publishDir "${baseDir}/results/${patient}"
+	publishDir "${baseDir}/results/${patient}", overwrite: true, mode:'copy'
 
 	input:
-	tuple val(chromosome), val(patient), file(vcf), file(csi), file(gvcf)
+	tuple val(chromosome), val(patient), file(vcf), file(csi)
 
     output:
     val(patient)
@@ -22,7 +22,7 @@ process split_norm_phase {
     # Filter PASS, DP>10, GQ>20, GT not missing
     bcftools view -i'FORMAT/GQ>20 & FORMAT/DP>10 & GT!~"mis" & FILTER~"PASS"' \
         chr${chromosome}.bcf.gz \
-        --threads 7 \
+        --threads ${task.cpus} \
         -Ob \
         -o chr${chromosome}_only_PASS_DPmore10_GQmore20.bcf.gz
     # Normalize
@@ -37,14 +37,14 @@ process split_norm_phase {
 
     # Phasing for imputation
     eagle \
-	    --vcfRef ${params.coverage_30_dir}/bcf/chr${chromosome}.bcf.gz \
+	    --vcfRef ${params.eagle_ref_panel}/chr${chromosome}.bcf.gz \
         --vcfTarget chr${chromosome}_norm.vcf.gz \
-        --geneticMapFile ${params.coverage_30_dir}/genetic_map_hg38_withX.txt \
+        --geneticMapFile ${params.eagle_ref_panel}/genetic_map_hg38_withX.txt \
         --outPrefix chr${chromosome}_phased \
         --allowRefAltSwap \
         --vcfOutFormat z \
         --keepMissingPloidyX \
-        --numThreads 6
+        --numThreads ${task.cpus}
     bcftools index -f chr${chromosome}_phased.vcf.gz
 	"""
 }
