@@ -1,7 +1,7 @@
 process split_norm_phase {
 
     label 'big_mem'
-    publishDir "${baseDir}/results/${patient}", overwrite: true, mode:'copy'
+    publishDir "${params.outdir}/results/${patient}", overwrite: true, mode:'copy'
 
     input:
     tuple val(chromosome), val(patient), file(vcf), file(csi)
@@ -50,7 +50,7 @@ process split_norm_phase {
 }
 
 process chr_concat {
-    publishDir "${baseDir}/results/${patient}"
+    publishDir "${params.outdir}/results/${patient}", overwrite: true, mode:'copy'
 
     input:
     val(patient)
@@ -63,10 +63,10 @@ process chr_concat {
 
     """
     # concatenate normalized
-    bcftools concat -a -d none ${baseDir}/results/${patient}/chr*_norm.vcf.gz --threads 6 -Ob -o ${patient}_norm.bcf.gz;
+    bcftools concat -a -d none ${params.outdir}/results/${patient}/chr*_norm.vcf.gz --threads 6 -Ob -o ${patient}_norm.bcf.gz;
     bcftools index -f ${patient}_norm.bcf.gz;
     # concatenate phased
-    bcftools concat -a -d none ${baseDir}/results/${patient}/chr*_phased.vcf.gz --threads 6 -Ob -o ${patient}_phased.bcf.gz;
+    bcftools concat -a -d none ${params.outdir}/results/${patient}/chr*_phased.vcf.gz --threads 6 -Ob -o ${patient}_phased.bcf.gz;
     bcftools index -f ${patient}_phased.bcf.gz;
     """
 }

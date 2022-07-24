@@ -40,9 +40,9 @@ process create_dir_structure {
     tuple val(patient), file(vcf), file(csi)
 
     """
-    mkdir -p $baseDir/results/{concat,helper}/
-    mkdir -p $baseDir/results/$patient/{concat,helper}/
-    mkdir -p $baseDir/results/$patient/imputation/{raw,proc,concat,helper}/
+    mkdir -p ${params.outdir}/results/{concat,helper}/
+    mkdir -p ${params.outdir}/results/$patient/{concat,helper}/
+    mkdir -p ${params.outdir}/results/$patient/imputation/{raw,proc,concat,helper}/
     """
 }
 
