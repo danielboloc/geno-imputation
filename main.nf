@@ -37,6 +37,7 @@ include { process_vcf; concatenate } from './workflows/QC_workflow.nf'
 include { concatImputed } from './modules/imputation.nf'
 
 // Chanels
+// Get sample name
 getPatient = """bcftools query -l ${params.vcf}"""
 params.patient = getPatient.execute().text.replaceAll(/\s+$/, "")
 channel
@@ -51,10 +52,19 @@ chroms_persons_ch = chromosomes
 
 workflow {
 
+    // Print pipeline info
     info()
+
+    // Create output folder structure
     create_dir_structure(samples_ch)
+
+    // Filter, normalize and phase vcf then impute by chromosomes
     process_vcf(chroms_persons_ch)
+
+    // Concatenate chromosomes from normalized, phased chromosomes
     concatenate( process_vcf.out[0] )
+
+    // Concatenate imputed chromosomes
     concatImputed( process_vcf.out[0] )
 
 }
