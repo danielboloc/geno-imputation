@@ -32,8 +32,9 @@ if(params.help){
 }
 
 // Include
-include { info } from './modules/utils.nf'
-include { process_vcf } from './workflows/QC_workflow.nf'
+include { info; create_dir_structure } from './modules/utils.nf'
+include { process_vcf; concatenate } from './workflows/QC_workflow.nf'
+include { concatImputed } from './modules/imputation.nf'
 
 // Chanels
 getPatient = """bcftools query -l ${params.vcf}"""
@@ -46,10 +47,14 @@ channel
 // Testing only chr1 and chr2
 chromosomes = channel.of(1..2)
 chroms_persons_ch = chromosomes
-	.combine(samples_ch)
+    .combine(samples_ch)
 
 workflow {
 
     info()
+    create_dir_structure(samples_ch)
     process_vcf(chroms_persons_ch)
+    concatenate( process_vcf.out[0] )
+    concatImputed( process_vcf.out[0] )
+
 }
