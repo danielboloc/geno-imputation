@@ -36,7 +36,7 @@ process extractZip {
 
     script:
     """
-    7z x ${params.imputation_job_dir}/${job_id}/local/chr_${chromosome}.zip -aoa -p'password' -o${params.outdir}/results/${patient}/imputation/raw/
+    7z x ${params.imputation_job_dir}/${job_id}/local/chr_${chromosome}.zip -aoa -p'password' -o$baseDir/results/${patient}/imputation/raw/
     """
 }
 
@@ -50,7 +50,7 @@ process indexImputed {
     val(patient), emit: patient_name
 
     """
-    bcftools index -f ${params.outdir}/results/${patient}/imputation/raw/chr${chromosome}.dose.vcf.gz
+    bcftools index -f $baseDir/results/${patient}/imputation/raw/chr${chromosome}.dose.vcf.gz
     """
 }
 
@@ -63,7 +63,7 @@ process concatImputed {
     val(patient)
 
     """
-    bcftools concat -a -d none ${params.outdir}/results/${patient}/imputation/raw/chr*.dose.vcf.gz -Ob -o ${params.outdir}/results/${patient}/imputation/concat/${patient}_imputed.bcf.gz;
-    bcftools index -f ${params.outdir}/results/${patient}/imputation/concat/${patient}_imputed.bcf.gz;
+    bcftools concat -a -d none $baseDir/results/${patient}/imputation/raw/chr*.dose.vcf.gz -Ob -o $baseDir/results/${patient}/imputation/concat/${patient}_imputed.bcf.gz;
+    bcftools index -f $baseDir/results/${patient}/imputation/concat/${patient}_imputed.bcf.gz;
     """
 }
