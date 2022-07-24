@@ -58,16 +58,15 @@ Create in your prefered directory a persistent data folder:
 mkdir -p MICHIGAN_IMPUTATION_SERVER/data
 ```
 Start it with the default Hapmap2 Reference Panel. To install aditional references, check this [documentation][GENEAPI].
-Also important to give a name to the docker container. You will use this name in the `params.docker_geneapi`.
 
-To start use:
+To start using:
 ```
-docker run -d -p 8080:80 -v $(pwd)/MICHIGAN_IMPUTATION_SERVER/data/:/data/ genepi/imputationserver:v1.4.1
+docker run -d -p 8080:80 -v MICHIGAN_IMPUTATION_SERVER/data/:/data/ genepi/imputationserver:v1.4.1
 ```
 
 Follow the [instructions][GENEAPI] on how to connect to the web interface in localhost:8080 to see your imputation jobs after initiating them through Nextflow.
 
-You will have to login into the web server with **admin** and default password **admin1978** mentioned in the documementation. You can create other profiles or use this one. In your user, go to "Profile"->"API Access" and press "Create API Token". Save this token in an environment variable or in a secure place. It will be needed in the run given to `params.token`.
+You will have to login into the web server with **admin** and default password **admin1978** mentioned in the documentation. You can create other profiles or use this one. In your user, go to "Profile"->"API Access" and press "Create API Token". Save this token in an environment variable or in a secure place. It will be needed in the run given to `params.token`.
 
 In the "Admin Panel" go to "Applications" and install "1000 Genomes Phase 3" in version 2.0.0 (take a coffee since it will take some time to get setup).
 
@@ -77,18 +76,22 @@ The fasta file for human is located [here][FASTA].
 
 # Run
 
+## Command line options
+
+## Mock example
+
 First export token or save it in ENV:
 ```bash
-TOKEN=*********************************
+export TOKEN=*********************************
 ```
-If you have every pre-requisite installed the following command should work:
+If you have every pre-requisite installed the following command should work when adapted to user paths/data:
 ```
-nextflow run geno-imutation/main.nf \
+nextflow run geno-imputation/main.nf \
     --vcf /HDD/example.vcf.gz \
     --ref_assembly /HDD/ref/Homo_sapiens_assembly38.fasta \
     --eagle_ref_panel /HDD/eagle/reference/panel/ \
     --token $TOKEN \
-    --imputation_job_dir /HDD/MICHIGAN_IMPUTATION_SERVER/data/jobs
+    --imputation_job_dir MICHIGAN_IMPUTATION_SERVER/data/jobs \
     --outdir /HDD/imputation_analysis/results
 ```
 
