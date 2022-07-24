@@ -16,3 +16,15 @@ def info (){
     log.info "========================================================"
     log.info ""
 }
+
+process create_dir_structure {
+    input:
+    tuple val(patient), file(vcf), file(csi)
+
+    """
+    mkdir -p $baseDir/results/{concat,helper}/
+    mkdir -p $baseDir/results/$patient/{concat,helper}/
+    mkdir -p $baseDir/results/$patient/imputation/{raw,proc,concat,helper}/
+    """
+}
+
