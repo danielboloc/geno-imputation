@@ -1,8 +1,21 @@
 # Introduction
 
+Imputation refers to the statistical inference of unobserved genotypes. It is achieved by using known haplotypes in a population, for instance from the HapMap or the 1000 Genomes Project in humans, thereby allowing to test for association between a trait of interest (e.g. a disease) and experimentally untyped genetic variants, but whose genotypes have been statistically inferred ("imputed"). Genotype imputation is usually performed on SNPs. More information can be found [here][imputation].
+
+The benefit of performing imputation on GWAS data is increasing SNP density, allowing for more accurate computations.
+
+This repository dows not accept data from GWAS in its current state. It accepts only .vcf[.gz] files.
+
+It uses a local instance of the [Michigan Imputation Server][MIS](MIS) to perform the imputation.
+
+Note: Phasing (done with Eagle) can also be done through the MIS API, but in the current implementation the process in done in the workflow. Might change in the near future.
+
 # Pre-requisites
 
 ## Java
+
+More info can he found [here][nxt-docs]
+
 ## Nextflow
 
 You can install it with this:
@@ -78,13 +91,37 @@ The fasta file for human is located [here][FASTA].
 
 ## Command line options
 
+The parameter description is as follows:
+```
+USAGE
+
+Mandatory arguments:
+-------------------
+--vcf                 FILE    Input .vcf file (it need to have .csi index from bcftools)
+--ref_assembly        FILE    FASTA reference file                                      
+--outdir              PATH    where output should be stored                             
+--eagle_ref_panel     PATH    where chromosome reference files are located              
+--token               STR     Michigan Imputation Server (MIS) local token              
+--imputation_job_dir  PATH    where MIS 'data' folder is located on disk                
+
+Optional arguments:
+------------------
+--max_memory          STR     specifies memory to allocate                              
+--max_cpus            INT     specifies number of logical cpus required                 
+--max_time            FILE    how long a process is allowed to run                      
+--monochrome_logs     FILE    whether to display logs using just one color (white)      
+
+```
+
 ## Mock example
 
 First export token or save it in ENV:
 ```bash
 export TOKEN=*********************************
 ```
-If you have every pre-requisite installed the following command should work when adapted to user paths/data:
+If you have every pre-requisite installed the following command should work when adapted to your user paths/data.
+
+Note: although in this example all mandatory arguments are given, if running on the same machine, they can be set in `nextflow.config` and only given the `--vcf`. Also, new config profiles can be created and parameters changed for other connected machines. The profile can be activated with `-profile`.
 ```
 nextflow run geno-imputation/main.nf \
     --vcf /HDD/example.vcf.gz \
@@ -102,3 +139,6 @@ correct imputation server path to where the localhost:8080 directs.
 [GENEAPI]: https://github.com/genepi/imputationserver-docker
 [EAGLE]: https://alkesgroup.broadinstitute.org/Eagle/#x1-320005.3.2
 [FASTA]: https://www.ncbi.nlm.nih.gov/genome?term=human&cmd=DetailsSearch
+[imputation]: https://en.wikipedia.org/wiki/Imputation_(genetics)
+[nxt-docs]: https://www.nextflow.io/docs/latest/getstarted.html
+[MIS]: https://github.com/genepi/imputationserver-docker
