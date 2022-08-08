@@ -6,7 +6,7 @@ The benefit of performing imputation on GWAS data is increasing SNP density, all
 
 This repository dows not accept data from GWAS in its current state. It accepts only .vcf[.gz] files.
 
-It uses a local instance of the [Michigan Imputation Server][MIS](MIS) to perform the imputation.
+It uses a local instance of the [Michigan Imputation Server][MIS] (MIS) to perform the imputation.
 
 Note: Phasing (done with Eagle) can also be done through the MIS API, but in the current implementation the process in done in the workflow. Might change in the near future.
 
@@ -77,15 +77,37 @@ To start using:
 docker run -d -p 8080:80 -v MICHIGAN_IMPUTATION_SERVER/data/:/data/ genepi/imputationserver:v1.4.1
 ```
 
-Follow the [instructions][GENEAPI] on how to connect to the web interface in localhost:8080 to see your imputation jobs after initiating them through Nextflow.
+Follow the [instructions][GENEAPI] on how to connect to the web interface in `localhost:8080` to see your imputation jobs after initiating them through Nextflow.
 
-You will have to login into the web server with **admin** and default password **admin1978** mentioned in the documentation. You can create other profiles or use this one. In your user, go to "Profile"->"API Access" and press "Create API Token". Save this token in an environment variable or in a secure place. It will be needed in the run given to `params.token`.
+You will have to login into the web server with **admin** and default password **admin1978** mentioned in the MIS instructions. You can create other profiles or use this one. In your user, go to "Profile"->"API Access" and press "Create API Token". Save this token in an environment variable or in a secure place. It will be needed in the run given to `params.token`.
 
 In the "Admin Panel" go to "Applications" and install "1000 Genomes Phase 3" in version 2.0.0 (take a coffee since it will take some time to get setup).
 
-# Fasta 
+## Fasta 
 
 The fasta file for human is located [here][FASTA].
+
+# Build Docker image
+
+All dependencies (except MIS) can be build with the `Dockerfile`. If using **buildkit**, you can use with `DOCKER_BUILDKIT=1`. The name of the image can be the same as the one in the following example or another one.
+
+```console
+DOCKER_BUILDKIT=1 docker build -t genoimputation:v1.0.0 .
+```
+
+To use it in your commands:
+```console
+nextflow run geno-imputation/main.nf -with-docker genoimputation:v1.0.0
+```
+
+Or define it in `nextflow.config` either in a new `profile` or in the `docker` scope:
+
+```groovy
+process.container = "genoimputation:v1.0.0"
+docker {
+    enabled = true
+}
+```
 
 # Run
 
@@ -134,7 +156,7 @@ nextflow run geno-imputation/main.nf \
 
 Make sure `--imputation_job_dir` is corresponding to a real path. This is not
 refering to where would you like to save the output, this parameter needs the
-correct imputation server path to where the localhost:8080 directs.
+correct imputation server path to where the `localhost:8080` directs.
 
 [GENEAPI]: https://github.com/genepi/imputationserver-docker
 [EAGLE]: https://alkesgroup.broadinstitute.org/Eagle/#x1-320005.3.2

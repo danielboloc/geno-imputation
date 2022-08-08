@@ -38,7 +38,7 @@ include { info; header; create_dir_structure } from './modules/utils.nf'
 include { process_vcf; concatenate } from './workflows/QC_workflow.nf'
 include { concatImputed } from './modules/imputation.nf'
 
-// Chanels
+// Channels
 // Get sample name
 getPatient = """bcftools query -l ${params.vcf}"""
 params.patient = getPatient.execute().text.replaceAll(/\s+$/, "")
